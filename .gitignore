@@ -4,3 +4,14 @@
 *.jar
 *.war
 *.ear
+
+# Idea files
+*.iml
+**/*.iml
+.idea
+gradle
+**/build
+**/libs/*
+
+# Android studio properties file
+local.properties
