@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+    compile 'com.mpatric:mp3agic:0.8.1'
     compile 'com.android.support:support-v4:13.0.+'
 }
 
@@ -23,5 +24,7 @@ android {
     defaultConfig {
         minSdkVersion 7
         targetSdkVersion 16
+        testPackageName "hu.paalgyula.android.id3tagger.test"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 }
