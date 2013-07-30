@@ -4,6 +4,13 @@
     <string name="app_name">ID3 Tagger</string>
     <string name="hello_world">Hello World</string>
     <string name="mp3_author">Előadó</string>
-    <string name="title_activity_main">MainActivity</string><string name="mp3_album">Album</string><string name="mp3_title">Title:</string><string name="save">Mentés</string><string name="search">Keresés</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="mp3_album">Album</string>
+    <string name="mp3_title">Title:</string>
+    <string name="save">Mentés</string>
+    <string name="search">Keresés</string>
+    <string name="artist">Large Text</string>
+    <string name="title">Előadó</string>
+    <string name="cancel">Mégsem</string>
 
 </resources>

@@ -2,15 +2,14 @@ package hu.paalgyula.android.id3tagger;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,14 +21,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditorActivity extends FragmentActivity {
     private EditText artist;
@@ -81,8 +79,8 @@ public class EditorActivity extends FragmentActivity {
                         .appendQueryParameter("entity", "song")
                         .build();
 
-                dialogFragment.setCancelable(false);
-                dialogFragment.show(getSupportFragmentManager(), "Loading");
+                //dialogFragment.setCancelable(false);
+                //dialogFragment.show(getSupportFragmentManager(), "Loading");
 
                 Log.w( "EditorActivity", uri.toString() );
 
@@ -99,24 +97,42 @@ public class EditorActivity extends FragmentActivity {
                     JSONObject jsonResponse = new JSONObject(sb.toString());
                     JSONArray results = jsonResponse.getJSONArray("results");
 
-                    for (int i = 0; i<results.length(); i++) {
-                        JSONObject obj = (JSONObject)results.get( i );
-                        String song = "Artist = " + obj.getString( "artistName" ) +
-                                " Album = " + obj.getString( "collectionName" ) +
-                                " Title = " + obj.getString( "trackName" );
+                    List<SongEntry> songEntryList = new ArrayList<SongEntry>();
 
-                        Log.w( "ResultSong", song );
-                        Toast.makeText(EditorActivity.this, song, Toast.LENGTH_SHORT);
+                    for (int i = 0; i < results.length(); i++) {
+                        SongEntry songEntry = new SongEntry((JSONObject) results.get(i));
+                        songEntryList.add(songEntry);
                     }
 
-                    //ArrayAdapter<String> aa = new ArrayAdapter<String>()
+                    final SongArrayAdapter aa = new SongArrayAdapter(EditorActivity.this, R.layout.song_list_layout, songEntryList.toArray(new SongEntry[songEntryList.size()]));
 
-                    Log.w("Results", results.toString());
+                    // Adapter dialog megmutatja a talalati listat
+                    // TODO: implement album picture
+                    AlertDialog dialog = new AlertDialog.Builder(EditorActivity.this)
+                            .setTitle(R.string.app_name)
+                            .setIcon(R.drawable.ic_launcher)
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            })
+                            .setAdapter(aa, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    SongEntry se = aa.getItem(i);
+                                    Toast.makeText(EditorActivity.this, se.getTrackName(), Toast.LENGTH_SHORT).show();
+                                }
+                            }).create();
+
+                    dialog.show();
+
+                    Log.d("Results", results.toString());
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
 
-                dialogFragment.dismiss();
+                //dialogFragment.dismiss();
             }
         });
     }
